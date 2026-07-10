@@ -290,57 +290,6 @@ Comenta RECALL que a gente mostra o sistema 👇
 #CaseSucesso #DigitalAI #AutomaçãoAutomotiva #ConcessionáriaComIA #SAC20</div>
   <button onclick="copyCaption()" style="margin-top:10px;background:rgba(79,156,249,0.1);border:1px solid rgba(79,156,249,0.22);color:#4F9CF9;border-radius:8px;padding:7px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;font-size:12px;cursor:pointer;">📋 Copiar legenda</button>
 </div>
-<script>
-/* ── Multi-Viewer Navigation ── */
-(function () {
-  var viewers   = document.querySelectorAll('.viewer');
-  if (!viewers.length) return;
-  var total     = viewers.length;
-  var current   = 0;
-  var dotsEl    = document.getElementById('dots');
-  var counterEl = document.getElementById('counter');
-  var prevBtn   = document.getElementById('prev');
-  var nextBtn   = document.getElementById('next');
-
-  /* Build dots */
-  if (dotsEl) {
-    for (var i = 0; i < total; i++) {
-      (function (idx) {
-        var d = document.createElement('div');
-        d.className = 'dot' + (idx === 0 ? ' active' : '');
-        d.addEventListener('click', function () { go(idx - current); });
-        dotsEl.appendChild(d);
-      })(i);
-    }
-  }
-
-  function show(n) {
-    viewers[current].style.display = 'none';
-    if (dotsEl && dotsEl.children[current]) dotsEl.children[current].classList.remove('active');
-    current = n;
-    viewers[current].style.display = '';
-    if (dotsEl && dotsEl.children[current]) dotsEl.children[current].classList.add('active');
-    if (counterEl) counterEl.textContent = (current + 1) + ' / ' + total;
-    if (prevBtn) prevBtn.disabled = (current === 0);
-    if (nextBtn) nextBtn.disabled = (current === total - 1);
-  }
-
-  /* Hide all viewers except first */
-  for (var j = 1; j < total; j++) viewers[j].style.display = 'none';
-  if (prevBtn) prevBtn.disabled = true;
-  if (counterEl) counterEl.textContent = '1 / ' + total;
-
-  window.go = function (dir) {
-    var next = current + dir;
-    if (next >= 0 && next < total) show(next);
-  };
-
-  document.addEventListener('keydown', function (e) {
-    if (e.key === 'ArrowLeft')  window.go(-1);
-    if (e.key === 'ArrowRight') window.go(1);
-  });
-})();
-</script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
