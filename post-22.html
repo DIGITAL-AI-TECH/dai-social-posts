@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+  <title>Post 22 — Quanto Custa NÃO Ter IA no Atendimento? | Digital AI</title>
+<style>
+  :root { --accent: #FF6348; --accent-glow: rgba(255,99,72,0.4); --accent-bg: rgba(255,99,72,0.09); }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: #111827; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; min-height: 100vh; padding: 32px 24px; gap: 24px; }
+  h1 { font-family: 'Plus Jakarta Sans', sans-serif; color: #fff; font-size: 18px; font-weight: 600; opacity: 0.7; letter-spacing: 0.05em; text-transform: uppercase; }
+  .viewer { width: 540px; height: 675px; overflow: hidden; position: relative; border-radius: 16px; box-shadow: 0 24px 60px rgba(0,0,0,0.6); }
+  .slide-wrap { width: 1080px; height: 1350px; transform: scale(0.5); transform-origin: top left; }
+  .slide { display: none; width: 1080px; height: 1350px; position: relative; overflow: hidden; }
+  .slide.active { display: block; }
+  .nav { display: flex; align-items: center; gap: 20px; margin-top: 4px; }
+  .nav button { background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2); color: #fff; width: 44px; height: 44px; border-radius: 50%; font-size: 18px; cursor: pointer; transition: background .2s; display: flex; align-items: center; justify-content: center; }
+  .nav button:hover { background: rgba(255,255,255,0.22); }
+  .nav button:disabled { opacity: 0.3; cursor: default; }
+  .counter { color: rgba(255,255,255,0.6); font-size: 15px; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 600; min-width: 52px; text-align: center; }
+  .dots { display: flex; gap: 8px; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.3); transition: all .25s; cursor: pointer; }
+  .dot.active { background: var(--accent); width: 24px; border-radius: 4px; }
+  .nv-bg { position: absolute; inset: 0; width: 1080px; height: 1350px; object-fit: cover; z-index: 0; }
+  .nv-cover { position: absolute; inset: 0; background: radial-gradient(ellipse at 65% 25%, rgba(255,99,72,0.22) 0%, rgba(5,0,0,0) 60%), linear-gradient(160deg, #100200 0%, #1a0500 40%, #0a0100 100%); }
+  .nv-fade-top { position: absolute; top: 0; left: 0; right: 0; height: 240px; background: linear-gradient(to bottom, rgba(0,0,0,0.45) 0%, transparent 100%); z-index: 1; }
+  .nv-fade-bot { position: absolute; bottom: 0; left: 0; right: 0; height: 640px; background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.3) 55%, transparent 100%); z-index: 1; }
+  .nv-logo { position: absolute; top: 64px; left: 64px; height: 44px; z-index: 10; filter: drop-shadow(0 2px 12px rgba(0,0,0,0.7)); }
+  .nv-text { position: absolute; bottom: 0; left: 0; right: 0; padding: 0 108px 240px; z-index: 10; display: flex; flex-direction: column; gap: 24px; }
+  .nv-h1 { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 144px; line-height: 0.93; color: #fff; text-transform: uppercase; letter-spacing: 1px; text-shadow: 0 0 60px rgba(0,0,0,0.9), 0 4px 32px rgba(0,0,0,0.8), 2px 2px 0 rgba(0,0,0,0.6); }
+  .nv-h2 { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 600; font-size: 40px; line-height: 1.3; color: rgba(255,255,255,0.85); }
+  .nv-accent { color: var(--accent); text-shadow: 0 0 30px var(--accent-glow), 0 2px 8px rgba(0,0,0,0.8); }
+  .nv-swipe { font-family: 'DM Sans', sans-serif; font-size: 22px; font-weight: 500; color: rgba(255,255,255,0.5); }
+  .si { position: relative; overflow: hidden; font-family: 'Plus Jakarta Sans', sans-serif; background: #080c1a; }
+  .si::before { content: ''; position: absolute; top: -120px; right: -120px; width: 680px; height: 680px; background: radial-gradient(circle, var(--accent-bg) 0%, transparent 70%); pointer-events: none; }
+  .si-ghost { position: absolute; bottom: -80px; right: -40px; font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 520px; line-height: 1; color: rgba(255,255,255,0.028); user-select: none; pointer-events: none; }
+  .si-logo { position: absolute; top: 64px; right: 72px; height: 40px; z-index: 10; filter: drop-shadow(0 2px 12px rgba(0,0,0,0.6)); opacity: 0.88; }
+  .si-wrap { position: relative; z-index: 2; padding: 180px 108px 200px; height: 100%; display: flex; flex-direction: column; justify-content: center; }
+  .si-tag { display: inline-block; font-weight: 700; font-size: 30px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); background: var(--accent-bg); border: 1px solid rgba(255,99,72,0.28); border-radius: 12px; padding: 12px 32px; margin-bottom: 44px; align-self: flex-start; }
+  .si-h1 { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 108px; line-height: 0.97; color: #fff; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 44px; text-shadow: 0 4px 32px rgba(0,0,0,0.5); }
+  .si-h1 em { color: var(--accent); font-style: normal; }
+  .si-divider { width: 160px; height: 10px; background: var(--accent); border-radius: 6px; margin-bottom: 44px; }
+  .si-body { font-weight: 500; font-size: 36px; line-height: 1.55; color: rgba(255,255,255,0.78); margin-bottom: 40px; }
+  .si-body strong { color: #fff; font-weight: 700; }
+  .si-list { list-style: none; display: flex; flex-direction: column; gap: 28px; }
+  .si-list li { display: block; position: relative; padding-left: 60px; font-size: 34px; color: rgba(255,255,255,0.8); line-height: 1.5; font-weight: 500; }
+  .si-list li::before { content: '→'; color: var(--accent); font-weight: 700; position: absolute; left: 0; top: 2px; }
+  .si-list li strong { color: #fff; font-weight: 700; }
+  .si-cost-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+  .si-cost { background: rgba(255,99,72,0.06); border: 1px solid rgba(255,99,72,0.2); border-radius: 24px; padding: 40px; text-align: center; }
+  .sc-label { font-size: 26px; color: rgba(255,255,255,0.6); margin-bottom: 12px; line-height: 1.4; }
+  .sc-num { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 72px; color: var(--accent); line-height: 1; }
+  .sc-note { font-size: 22px; color: rgba(255,255,255,0.4); margin-top: 8px; }
+  .si-vs { display: grid; grid-template-columns: 1fr auto 1fr; gap: 24px; align-items: center; }
+  .sv-col { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 24px; padding: 40px; }
+  .sv-title { font-size: 26px; font-weight: 700; margin-bottom: 20px; }
+  .sv-title.bad { color: var(--accent); }
+  .sv-title.good { color: #00E676; }
+  .sv-item { font-size: 26px; color: rgba(255,255,255,0.7); line-height: 1.5; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.06); }
+  .sv-item:last-child { border-bottom: none; }
+  .sv-div { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 72px; color: rgba(255,255,255,0.15); text-align: center; }
+  .si-stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; margin-top: 20px; }
+  .si-stat { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 32px; padding: 48px; text-align: center; }
+  .si-stat-num { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 100px; color: var(--accent); line-height: 1; margin-bottom: 16px; }
+  .si-stat-label { font-size: 32px; color: rgba(255,255,255,0.55); line-height: 1.4; }
+  .si-cta-bg { position: absolute; inset: 0; background: linear-gradient(135deg, #0e1020 0%, #071020 100%); }
+  .si-cta-bg::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 40%, var(--accent-bg) 0%, transparent 65%); }
+  .si-cta-inner { position: relative; z-index: 2; padding: 180px 108px 200px; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 44px; }
+  .si-cta-h1 { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 108px; line-height: 0.97; color: #fff; text-transform: uppercase; letter-spacing: 1px; max-width: 900px; }
+  .si-cta-h1 em { color: var(--accent); font-style: normal; }
+  .si-cta-body { font-weight: 500; font-size: 36px; line-height: 1.55; color: rgba(255,255,255,0.72); max-width: 860px; }
+  .si-cta-body strong { color: #fff; font-weight: 700; }
+  .si-cta-btn { background: var(--accent); color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 36px; letter-spacing: 0.06em; text-transform: uppercase; border-radius: 20px; padding: 36px 72px; box-shadow: 0 8px 40px var(--accent-glow); }
+  .si-cta-domain { font-family: 'DM Sans', sans-serif; font-size: 32px; color: rgba(255,255,255,0.35); }
+  .si.compact .si-tag { margin-bottom: 20px; }
+  .si.compact .si-h1 { font-size: 84px; margin-bottom: 20px; }
+  .si.compact .si-divider { margin-bottom: 20px; }
+  .si.compact .si-body { font-size: 32px; margin-bottom: 16px; }
+  .si.compact .si-list { gap: 16px; }
+  .si.compact .si-list li { font-size: 30px; }
+  .si.compact .si-cost-grid { gap: 24px; }
+  .si.compact .si-cost { padding: 32px; }
+  .si.compact .sc-num { font-size: 60px; }
+  .si.compact .sc-label { font-size: 24px; }
+</style>
+</head>
+<body>
+<h1>Post 22 — Quanto Custa NÃO Ter IA no Atendimento?</h1>
+<div class="viewer">
+  <div class="slide-wrap">
+
+    <!-- SLIDE 1 — Capa -->
+    <div class="slide active">
+      <img class="nv-bg" src="https://s3.amazonaws.com/cdn.digital-ai.tech/uploads/media-cortex/social/assets/post-22-cover.jpg" alt="capa post 22">
+      <div class="nv-fade-top"></div>
+      <div class="nv-fade-bot"></div>
+      <img class="nv-logo" src="https://s3.amazonaws.com/cdn.digital-ai.tech/uploads/media-cortex/identity/digital-ai/logos/logo-negative.png" alt="Digital AI">
+      <div class="nv-text">
+        <div class="nv-h1">QUANTO<br>CUSTA<br><span class="nv-accent">NÃO TER</span><br>IA?</div>
+        <div class="nv-h2">O custo da inação é maior do que o custo de implementar — e você vai ver os números</div>
+        <div class="nv-swipe">Arraste para ver a conta real →</div>
+      </div>
+    </div>
+
+    <!-- SLIDE 2 — Os Custos Ocultos -->
+    <div class="slide si compact" style="background:radial-gradient(ellipse at 60% 30%,rgba(255,99,72,0.07) 0%,rgba(8,12,26,1) 70%);">
+      <div class="si-ghost">02</div>
+      <img class="si-logo" src="https://s3.amazonaws.com/cdn.digital-ai.tech/uploads/media-cortex/identity/digital-ai/logos/logo-negative.png" alt="Digital AI">
+      <div class="si-wrap" style="justify-content:flex-start;padding-top:180px;">
+        <div class="si-tag">Os Custos Ocultos</div>
+        <h2 class="si-h1">O QUE<br>VOCÊ<br><em>NÃO VÊ</em><br>NA CONTA</h2>
+        <div class="si-divider"></div>
+        <div class="si-cost-grid">
+          <div class="si-cost">
+            <div class="sc-label">Atendente CLT (média)<br>com encargos</div>
+            <div class="sc-num">R$3.2k</div>
+            <div class="sc-note">por mês / por pessoa</div>
+          </div>
+          <div class="si-cost">
+            <div class="sc-label">Leads perdidos fora<br>do horário</div>
+            <div class="sc-num">-40%</div>
+            <div class="sc-note">da receita potencial</div>
+          </div>
+          <div class="si-cost">
+            <div class="sc-label">Tempo em FAQ<br>repetitivo por dia</div>
+            <div class="sc-num">4h</div>
+            <div class="sc-note">por atendente</div>
+          </div>
+          <div class="si-cost">
+            <div class="sc-label">Custo de turnover<br>no atendimento</div>
+            <div class="sc-num">R$8k</div>
+            <div class="sc-note">treinamento + ramp-up</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 3 — IA vs Sem IA -->
+    <div class="slide si compact" style="background:radial-gradient(ellipse at 40% 70%,rgba(255,99,72,0.08) 0%,rgba(8,12,26,1) 72%);">
+      <div class="si-ghost">03</div>
+      <img class="si-logo" src="https://s3.amazonaws.com/cdn.digital-ai.tech/uploads/media-cortex/identity/digital-ai/logos/logo-negative.png" alt="Digital AI">
+      <div class="si-wrap" style="justify-content:flex-start;padding-top:180px;">
+        <div class="si-tag">A Comparação</div>
+        <h2 class="si-h1">SEM IA<br>VS <em>COM IA</em><br>/ MÊS</h2>
+        <div class="si-divider"></div>
+        <div class="si-vs">
+          <div class="sv-col">
+            <div class="sv-title bad">Sem IA</div>
+            <div class="sv-item">3 atendentes → R$9.6k</div>
+            <div class="sv-item">Sem atendimento 18h–8h</div>
+            <div class="sv-item">Inconsistência de padrão</div>
+            <div class="sv-item">Turnover frequente</div>
+            <div class="sv-item">FAQ manual todo dia</div>
+          </div>
+          <div class="sv-div">vs</div>
+          <div class="sv-col">
+            <div class="sv-title good">Com IA</div>
+            <div class="sv-item">1 atendente + IA → R$6.2k</div>
+            <div class="sv-item">24h, 7 dias, nunca falta</div>
+            <div class="sv-item">Padrão consistente sempre</div>
+            <div class="sv-item">IA não pede demissão</div>
+            <div class="sv-item">FAQ = resolvido</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 4 — O Cálculo do ROI -->
+    <div class="slide si compact" style="background:radial-gradient(ellipse at 50% 50%,rgba(255,99,72,0.07) 0%,rgba(8,12,26,1) 70%);">
+      <div class="si-ghost">04</div>
+      <img class="si-logo" src="https://s3.amazonaws.com/cdn.digital-ai.tech/uploads/media-cortex/identity/digital-ai/logos/logo-negative.png" alt="Digital AI">
+      <div class="si-wrap" style="justify-content:flex-start;padding-top:180px;">
+        <div class="si-tag">O Cálculo</div>
+        <h2 class="si-h1">QUANTO<br>VOCÊ<br><em>DEIXA</em><br>NA MESA</h2>
+        <div class="si-divider"></div>
+        <div class="si-body">Empresa com <strong>50 leads/mês fora do horário:</strong></div>
+        <ul class="si-list">
+          <li>Ticket médio de R$500 → <strong>R$25.000/mês em potencial</strong></li>
+          <li>Sem IA: perde 40% = <strong>R$10.000/mês descartados</strong></li>
+          <li>Custo da IA: a partir de R$800/mês</li>
+          <li><strong>Economia real: +R$9.200/mês líquidos só com IA noturna</strong></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- SLIDE 5 — Números Reais -->
+    <div class="slide si compact" style="background:radial-gradient(ellipse at 50% 60%,rgba(255,99,72,0.09) 0%,rgba(8,12,26,1) 68%);">
+      <div class="si-ghost">05</div>
+      <img class="si-logo" src="https://s3.amazonaws.com/cdn.digital-ai.tech/uploads/media-cortex/identity/digital-ai/logos/logo-negative.png" alt="Digital AI">
+      <div class="si-wrap">
+        <div class="si-tag">Resultado Real</div>
+        <h2 class="si-h1">O CUSTO<br>DE<br><em>ESPERAR.</em></h2>
+        <div class="si-divider" style="margin-bottom:32px;"></div>
+        <div class="si-stat-grid">
+          <div class="si-stat">
+            <div class="si-stat-num">R$800</div>
+            <div class="si-stat-label">custo inicial do agente de IA por mês</div>
+          </div>
+          <div class="si-stat">
+            <div class="si-stat-num">R$9.2k</div>
+            <div class="si-stat-label">economia média com leads recuperados + FTE</div>
+          </div>
+          <div class="si-stat">
+            <div class="si-stat-num">11×</div>
+            <div class="si-stat-label">retorno sobre o investimento em IA no 1º mês</div>
+          </div>
+          <div class="si-stat">
+            <div class="si-stat-num">30d</div>
+            <div class="si-stat-label">para o agente estar ativo e gerando resultado</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 6 — CTA -->
+    <div class="slide">
+      <div class="si-cta-bg"></div>
+      <img class="si-logo" src="https://s3.amazonaws.com/cdn.digital-ai.tech/uploads/media-cortex/identity/digital-ai/logos/logo-negative.png" alt="Digital AI">
+      <div class="si-cta-inner">
+        <h2 class="si-cta-h1">QUANTO<br>VOCÊ VAI<br><em>PERDER</em><br>ESSE MÊS?</h2>
+        <p class="si-cta-body">A Digital AI faz o cálculo de ROI <strong>específico para o seu negócio</strong> gratuitamente. Só precisamos de 30 minutos.</p>
+        <div class="si-cta-btn">COMENTA "ROI" ↓</div>
+        <div class="si-cta-domain">digital-ai.tech</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+<div class="nav">
+  <button id="prev" onclick="changeSlide(-1)">&#8592;</button>
+  <div class="dots" id="dots"></div>
+  <span class="counter" id="counter">1 / 6</span>
+  <button id="next" onclick="changeSlide(1)">&#8594;</button>
+</div>
+<div style="display:flex;gap:10px;margin-top:14px;justify-content:center;flex-wrap:wrap;">
+  <button onclick="downloadSlide('ig')" style="background:linear-gradient(135deg,#4F9CF9,#9B5CF6);color:#fff;border:none;border-radius:10px;padding:11px 22px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:13px;cursor:pointer;min-width:200px;">⬇ Instagram (ZIP PNG)</button>
+  <button onclick="downloadSlide('li')" style="background:rgba(255,255,255,0.08);color:#fff;border:1px solid rgba(255,255,255,0.18);border-radius:10px;padding:11px 22px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:13px;cursor:pointer;min-width:200px;">⬇ LinkedIn (PDF)</button>
+</div>
+<div style="margin-top:14px;background:#0e1220;border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:18px 20px;max-width:540px;">
+  <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;font-weight:700;color:rgba(255,255,255,0.32);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:8px;">📝 Legenda do Post</div>
+  <div id="post-caption" style="font-family:'DM Sans',sans-serif;font-size:13px;color:rgba(255,255,255,0.72);line-height:1.65;white-space:pre-wrap;">Empresa sem IA não paga menos — ela só paga de formas diferentes.
+
+- Leads perdidos fora do horário comercial
+- Atendentes fazendo trabalho repetitivo
+- Clientes que foram para a concorrência por demora
+- Oportunidades que sumiram sem follow-up
+
+↓ Arraste para calcular quanto isso custa por mês
+
+Comenta CUSTO que a gente faz a simulação com você 👇
+
+#CustoDoNãoIA #DigitalAI #ROIDigital #AutomaçãoDeAtendimento #AIParaPMEs</div>
+  <button onclick="copyCaption()" style="margin-top:10px;background:rgba(79,156,249,0.1);border:1px solid rgba(79,156,249,0.22);color:#4F9CF9;border-radius:8px;padding:7px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;font-size:12px;cursor:pointer;">📋 Copiar legenda</button>
+</div>
+<script>
+/* ── Carousel Navigation ── */
+(function () {
+  var navSlides = document.querySelectorAll('.slide');
+  if (!navSlides.length) return;
+  var navTotal = navSlides.length;
+  var navCurrent = 0;
+  var dotsEl    = document.getElementById('dots');
+  var counterEl = document.getElementById('counter');
+  var prevBtn   = document.getElementById('prev');
+  var nextBtn   = document.getElementById('next');
+
+  if (dotsEl) {
+    for (var i = 0; i < navTotal; i++) {
+      (function (idx) {
+        var d = document.createElement('div');
+        d.className = 'dot' + (idx === 0 ? ' active' : '');
+        d.addEventListener('click', function () { goTo(idx); });
+        dotsEl.appendChild(d);
+      })(i);
+    }
+  }
+
+  function goTo(n) {
+    navSlides[navCurrent].classList.remove('active');
+    if (dotsEl && dotsEl.children[navCurrent]) dotsEl.children[navCurrent].classList.remove('active');
+    navCurrent = n;
+    navSlides[navCurrent].classList.add('active');
+    if (dotsEl && dotsEl.children[navCurrent]) dotsEl.children[navCurrent].classList.add('active');
+    if (counterEl) counterEl.textContent = (navCurrent + 1) + ' / ' + navTotal;
+    if (prevBtn) prevBtn.disabled = (navCurrent === 0);
+    if (nextBtn) nextBtn.disabled = (navCurrent === navTotal - 1);
+  }
+
+  window.goTo = goTo;
+  window.changeSlide = function (dir) {
+    var next = navCurrent + dir;
+    if (next >= 0 && next < navTotal) goTo(next);
+  };
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowLeft')  window.changeSlide(-1);
+    if (e.key === 'ArrowRight') window.changeSlide(1);
+  });
+
+  goTo(0);
+})();
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script>
+/* ── Capture via html2canvas onclone (zero DOM mutation) ── */
+async function captureElement(el, scale) {
+  return await html2canvas(el, {
+    width: 1080, height: 1350, scale: scale,
+    useCORS: true, allowTaint: false, backgroundColor: '#080c1a',
+    logging: false, imageTimeout: 15000, removeContainer: true,
+    onclone: function(clonedDoc, clonedEl) {
+      /* Inject CSS overrides into clone before render */
+      var s = clonedDoc.createElement('style');
+      s.textContent =
+        /* Remove viewer clip + shadow that cause edge artifacts */
+        '.viewer{border-radius:0!important;box-shadow:none!important;' +
+        'overflow:visible!important;width:1080px!important;height:1350px!important;transform:none!important;}' +
+        /* Remove slide-wrap scale transform */
+        '.slide-wrap{transform:none!important;width:1080px!important;' +
+        'height:1350px!important;overflow:visible!important;}' +
+        /* Remove CSS filter (drop-shadow) that creates blurry halos */
+        '.nv-logo,.si-logo{filter:none!important;}' +
+        /* Single-card posts */
+        '.frame-wrapper{border-radius:0!important;box-shadow:none!important;' +
+        'overflow:visible!important;width:1080px!important;height:1350px!important;}' +
+        '.post-frame{transform:none!important;width:1080px!important;height:1350px!important;}';
+      clonedDoc.head.appendChild(s);
+      /* Force this slide visible at full resolution */
+      clonedEl.style.setProperty('display',    'block',    'important');
+      clonedEl.style.setProperty('visibility', 'visible',  'important');
+      clonedEl.style.setProperty('opacity',    '1',        'important');
+      clonedEl.style.setProperty('transform',  'none',     'important');
+      clonedEl.style.setProperty('width',      '1080px',   'important');
+      clonedEl.style.setProperty('height',     '1350px',   'important');
+      clonedEl.style.setProperty('overflow',   'hidden',   'important');
+      clonedEl.style.setProperty('position',   'relative', 'important');
+      /* Body reset — prevent body layout from interfering */
+      var b = clonedDoc.body;
+      if (b) {
+        b.style.setProperty('margin',     '0',       'important');
+        b.style.setProperty('padding',    '0',       'important');
+        b.style.setProperty('background', '#080c1a', 'important');
+        b.style.setProperty('display',    'block',   'important');
+        b.style.setProperty('min-height', '0',       'important');
+        b.style.setProperty('overflow',   'visible', 'important');
+      }
+    }
+  });
+}
+
+async function downloadSlide(fmt) {
+  var btn = event.currentTarget;
+  btn.disabled = true;
+  btn.textContent = '⏳ Aguarde...';
+  try {
+    /* Post ID + headline for filenames */
+    var postId = 'post-22';
+    var titleParts = document.title.split(' — ');
+    var headline = titleParts[1] ? titleParts[1].split(' | ')[0].trim() : '';
+    var slug = headline
+      .normalize('NFD').replace(/[̀-ͯ]/g, '')
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-|-$/g, '');
+    var baseName = postId + (slug ? '-' + slug : '');
+
+    /* Detect structure and collect all slides */
+    var slides = [];
+    var isSingleCard = !!document.querySelector('.post-frame');
+    var viewers      = document.querySelectorAll('.viewer');
+
+    if (isSingleCard) {
+      slides = [document.querySelector('.post-frame')];
+    } else if (viewers.length > 1) {
+      /* Multi-viewer: posts 27-30 — each viewer = one full slide */
+      slides = Array.from(viewers).map(function(v) {
+        return v.querySelector('.slide.active') || v.querySelector('.slide');
+      });
+    } else {
+      /* Standard carousel: ALL slides (including hidden ones) */
+      slides = Array.from(document.querySelectorAll('.slide'));
+    }
+
+    if (fmt === 'ig') {
+      /* Instagram: ZIP of ALL slides as PNG 6480×8100 */
+      var zip = new JSZip();
+      for (var i = 0; i < slides.length; i++) {
+        btn.textContent = '⏳ Capturando (' + (i+1) + '/' + slides.length + ')...';
+        var canvas = await captureElement(slides[i], 6);
+        var blob   = await new Promise(function(res){ canvas.toBlob(res, 'image/png'); });
+        zip.file(baseName + '-slide-' + String(i+1).padStart(2,'0') + '.png', blob);
+      }
+      btn.textContent = '⏳ Comprimindo ZIP...';
+      var zipBlob = await zip.generateAsync({type:'blob', compression:'STORE'});
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(zipBlob);
+      a.download = baseName + '-instagram.zip';
+      a.click();
+      URL.revokeObjectURL(a.href);
+    } else {
+      /* LinkedIn: multi-page PDF 3240×4050 */
+      var pdf = new window.jspdf.jsPDF({orientation:'portrait', unit:'px', format:[3240,4050]});
+      for (var i = 0; i < slides.length; i++) {
+        btn.textContent = '⏳ PDF (' + (i+1) + '/' + slides.length + ')...';
+        var c = await captureElement(slides[i], 3);
+        if (i > 0) pdf.addPage([3240,4050],'p');
+        pdf.addImage(c.toDataURL('image/jpeg',0.92),'JPEG',0,0,3240,4050);
+      }
+      pdf.save(baseName + '-linkedin.pdf');
+    }
+  } catch(e) {
+    console.error(e);
+    alert('Erro ao capturar. Tente novamente.');
+  }
+  btn.textContent = fmt === 'ig' ? '⬇ Instagram (ZIP PNG)' : '⬇ LinkedIn (PDF)';
+  btn.disabled = false;
+}
+
+function copyCaption() {
+  var txt = document.getElementById('post-caption').innerText;
+  var btn = event.currentTarget;
+  navigator.clipboard.writeText(txt).then(function() {
+    btn.textContent = '✅ Copiado!';
+    setTimeout(function(){ btn.textContent = '📋 Copiar legenda'; }, 2000);
+  }).catch(function(){
+    var ta = document.createElement('textarea'); ta.value = txt;
+    document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+    btn.textContent = '✅ Copiado!';
+    setTimeout(function(){ btn.textContent = '📋 Copiar legenda'; }, 2000);
+  });
+}
+</script>
+</body>
+</html>

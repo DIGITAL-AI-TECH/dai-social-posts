@@ -1,0 +1,8 @@
+node_modules/
+.DS_Store
+*.py
+*.js
+*.json
+exports/
+assets/
+EXPORT_STATUS.txt

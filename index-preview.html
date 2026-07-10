@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Posts Preview — Digital AI Instagram</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: #0a0d14;
+      color: #fff;
+      min-height: 100vh;
+      padding: 0 0 80px;
+    }
+
+    header {
+      background: linear-gradient(180deg, #0d1224 0%, #0a0d14 100%);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding: 32px 40px 28px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .logo-mark {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, #4F9CF9 0%, #9B5CF6 100%);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 800;
+      font-size: 18px;
+      color: #fff;
+      flex-shrink: 0;
+    }
+
+    .header-text h1 {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1;
+    }
+
+    .header-text p {
+      font-size: 13px;
+      color: rgba(255,255,255,0.45);
+      margin-top: 4px;
+    }
+
+    .header-count {
+      margin-left: auto;
+      background: rgba(79,156,249,0.12);
+      border: 1px solid rgba(79,156,249,0.25);
+      border-radius: 20px;
+      padding: 6px 16px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      color: #4F9CF9;
+    }
+
+    .section-header {
+      padding: 40px 40px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .section-label {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.3);
+      white-space: nowrap;
+    }
+
+    .section-line {
+      flex: 1;
+      height: 1px;
+      background: rgba(255,255,255,0.06);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 24px;
+      padding: 0 40px;
+    }
+
+    .card {
+      text-decoration: none;
+      color: inherit;
+      display: block;
+      border-radius: 14px;
+      overflow: hidden;
+      background: #0e1220;
+      border: 1px solid rgba(255,255,255,0.07);
+      transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+      cursor: pointer;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(255,255,255,0.14);
+      box-shadow: 0 16px 48px rgba(0,0,0,0.6);
+    }
+
+    .card-thumb {
+      width: 100%;
+      overflow: hidden;
+      position: relative;
+      background: #080c1a;
+    }
+
+    .card-thumb iframe {
+      width: 1080px;
+      height: 1350px;
+      border: none;
+      pointer-events: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+      transform-origin: top left;
+    }
+
+    .thumb-fallback {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #080c1a;
+      transition: opacity 0.5s;
+      z-index: 2;
+    }
+
+    .thumb-fallback.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .thumb-spinner {
+      width: 24px;
+      height: 24px;
+      border: 2px solid rgba(255,255,255,0.08);
+      border-top-color: rgba(255,255,255,0.35);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .card-info {
+      padding: 14px 16px 16px;
+      background: #0e1220;
+      border-top: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .card-num {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.22);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 5px;
+    }
+
+    .card-title {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.82);
+      line-height: 1.38;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .card-open {
+      margin-top: 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.25);
+      letter-spacing: 0.04em;
+      transition: color 0.2s;
+    }
+
+    .card:hover .card-open { color: rgba(255,255,255,0.6); }
+
+    .card-open svg { width: 11px; height: 11px; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo-mark">D</div>
+  <div class="header-text">
+    <h1>Digital AI — Instagram Posts</h1>
+    <p>Preview de todos os carrosséis</p>
+  </div>
+  <div class="header-count">30 posts</div>
+</header>
+
+<div class="section-header">
+  <span class="section-label">Todos os posts</span>
+  <div class="section-line"></div>
+</div>
+
+<div class="grid" id="grid"></div>
+
+<script>
+const posts = [
+  { n: '01', title: 'Agente de IA vs Chatbot' },
+  { n: '02', title: 'Sua empresa ainda perde leads?' },
+  { n: '03', title: 'Case SorriFácil' },
+  { n: '04', title: 'Como funciona na prática' },
+  { n: '05', title: '73% das PMEs' },
+  { n: '06', title: 'Atendente vs Agente de IA' },
+  { n: '07', title: 'Sua Clínica Agenda Enquanto Você Dorme' },
+  { n: '08', title: '3 Perguntas que seu WhatsApp não responde' },
+  { n: '09', title: 'De 30 a 300 Leads por Mês Sem Contratar' },
+  { n: '10', title: 'Seus Dados com IA Ficam no Brasil?' },
+  { n: '11', title: 'Imobiliária: Qualifica Leads 24h Sem Corretor de Plantão' },
+  { n: '12', title: 'Educação: Matrícula Automática com IA' },
+  { n: '13', title: 'Automotivo: Do Agendamento à Pós-Venda com IA' },
+  { n: '14', title: 'Varejo: Atenda 200 Clientes ao Mesmo Tempo' },
+  { n: '15', title: 'Cooperativa: Atendimento de Associados Sem Fila' },
+  { n: '16', title: 'Quanto Tempo Sua Equipe Perde com Tarefas Repetitivas?' },
+  { n: '17', title: 'O Que Acontece Quando o Atendimento Vai Embora?' },
+  { n: '18', title: '5 Processos que Sua Equipe Odeia (e a IA Resolve)' },
+  { n: '19', title: '7 Mitos sobre IA no Atendimento' },
+  { n: '20', title: 'LGPD e IA: o que sua empresa precisa saber' },
+  { n: '21', title: '7 Perguntas para Escolher a IA Certa' },
+  { n: '22', title: 'Quanto Custa NÃO Ter IA no Atendimento?' },
+  { n: '23', title: 'ROI em 90 Dias: Como Medir o Retorno da IA' },
+  { n: '24', title: 'Antes e Depois: Clínica que Automatizou o Atendimento' },
+  { n: '25', title: 'IA que Aprende: Como Nossos Agentes Evoluem' },
+  { n: '26', title: 'Atendimento Multi-Canal com Uma IA' },
+  { n: '27', title: 'Por Que Chatbots Genéricos Falham' },
+  { n: '28', title: 'Case: Escola Triplicou Matrículas com IA' },
+  { n: '29', title: 'Case: Concessionária com 0 Ligações de Recall' },
+  { n: '30', title: 'Implementar IA em 30 Dias: O Passo a Passo' },
+];
+
+const grid = document.getElementById('grid');
+
+posts.forEach(p => {
+  const href = 'post-' + p.n + '.html';
+
+  const card = document.createElement('a');
+  card.className = 'card';
+  card.href = href;
+  card.target = '_blank';
+  card.innerHTML =
+    '<div class="card-thumb" id="thumb-' + p.n + '">' +
+      '<div class="thumb-fallback" id="fallback-' + p.n + '"><div class="thumb-spinner"></div></div>' +
+      '<iframe src="' + href + '" scrolling="no" loading="lazy" id="frame-' + p.n + '"></iframe>' +
+    '</div>' +
+    '<div class="card-info">' +
+      '<div class="card-num">POST ' + p.n + '</div>' +
+      '<div class="card-title">' + p.title + '</div>' +
+      '<div class="card-open">Abrir <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 10L10 2M5 2h5v5"/></svg></div>' +
+    '</div>';
+
+  grid.appendChild(card);
+
+  const thumb = document.getElementById('thumb-' + p.n);
+  const fallback = document.getElementById('fallback-' + p.n);
+  const iframe = document.getElementById('frame-' + p.n);
+
+  function applyScale() {
+    const w = thumb.offsetWidth;
+    if (w > 0) {
+      const scale = w / 1080;
+      iframe.style.transform = 'scale(' + scale + ')';
+      thumb.style.height = Math.round(1350 * scale) + 'px';
+    }
+  }
+
+  applyScale();
+  window.addEventListener('resize', applyScale);
+
+  iframe.addEventListener('load', function() {
+    try {
+      const d = iframe.contentDocument || iframe.contentWindow.document;
+      const s = d.createElement('style');
+      s.textContent =
+        'h1,.nav,.counter{display:none!important}' +
+        'body{margin:0!important;padding:0!important;overflow:hidden!important;display:block!important;min-height:0!important;background:#080c1a!important}' +
+        '.viewer{width:1080px!important;height:1350px!important;border-radius:0!important;box-shadow:none!important;}' +
+        '.slide-wrap{transform:none!important;width:1080px!important;height:1350px!important;}' +
+        '.frame-wrapper{width:1080px!important;height:1350px!important;border-radius:0!important;box-shadow:none!important;overflow:hidden!important;}' +
+        '.post-frame{transform:none!important;width:1080px!important;height:1350px!important;overflow:hidden!important;}';
+      d.head.appendChild(s);
+    } catch(e) {}
+    fallback.classList.add('hidden');
+    setTimeout(applyScale, 50);
+  });
+});
+
+window.addEventListener('resize', function() {
+  document.querySelectorAll('.card-thumb').forEach(function(thumb) {
+    const iframe = thumb.querySelector('iframe');
+    const w = thumb.offsetWidth;
+    if (w > 0 && iframe) {
+      const scale = w / 1080;
+      iframe.style.transform = 'scale(' + scale + ')';
+      thumb.style.height = Math.round(1350 * scale) + 'px';
+    }
+  });
+});
+</script>
+</body>
+</html>

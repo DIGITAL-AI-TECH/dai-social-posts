@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+  <title>Post 27 — Por Que Chatbots Genéricos Falham | Digital AI</title>
+<style>
+  :root { --accent: #FF8C42; --accent-glow: rgba(255,140,66,0.4); --accent-bg: rgba(255,140,66,0.09); }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: #111827; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; min-height: 100vh; padding: 32px 24px; gap: 24px; }
+  h1 { font-family: 'Plus Jakarta Sans', sans-serif; color: #fff; font-size: 18px; font-weight: 600; opacity: 0.7; letter-spacing: 0.05em; text-transform: uppercase; }
+  .viewer { width: 540px; height: 675px; overflow: hidden; position: relative; border-radius: 16px; box-shadow: 0 24px 60px rgba(0,0,0,0.6); }
+  .slide-wrap { width: 1080px; height: 1350px; transform: scale(0.5); transform-origin: top left; }
+  .slide { display: none; width: 1080px; height: 1350px; position: relative; overflow: hidden; }
+  .slide.active { display: block; }
+  .nav { display: flex; align-items: center; gap: 20px; margin-top: 4px; }
+  .nav button { background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2); color: #fff; width: 44px; height: 44px; border-radius: 50%; font-size: 18px; cursor: pointer; transition: background .2s; display: flex; align-items: center; justify-content: center; }
+  .nav button:hover { background: rgba(255,255,255,0.22); }
+  .nav button:disabled { opacity: 0.3; cursor: default; }
+  .counter { color: rgba(255,255,255,0.6); font-size: 15px; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 600; min-width: 52px; text-align: center; }
+  .dots { display: flex; gap: 8px; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.3); transition: all .25s; cursor: pointer; }
+  .dot.active { background: var(--accent); width: 24px; border-radius: 4px; }
+  .nv-bg { position: absolute; inset: 0; width: 1080px; height: 1350px; object-fit: cover; z-index: 0; }
+  .nv-cover { position: absolute; inset: 0; background: radial-gradient(ellipse at 62% 28%, rgba(255,140,66,0.22) 0%, rgba(5,0,0,0) 60%), linear-gradient(160deg, #0f0500 0%, #1a0b00 40%, #0a0400 100%); }
+  .nv-fade-top { position: absolute; top: 0; left: 0; right: 0; height: 240px; background: linear-gradient(to bottom, rgba(0,0,0,0.45) 0%, transparent 100%); z-index: 1; }
+  .nv-fade-bot { position: absolute; bottom: 0; left: 0; right: 0; height: 640px; background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.3) 55%, transparent 100%); z-index: 1; }
+  .nv-logo { position: absolute; top: 64px; left: 64px; height: 44px; z-index: 10; filter: drop-shadow(0 2px 12px rgba(0,0,0,0.7)); }
+  .nv-text { position: absolute; bottom: 0; left: 0; right: 0; padding: 0 108px 240px; z-index: 10; display: flex; flex-direction: column; gap: 24px; }
+  .nv-h1 { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 144px; line-height: 0.93; color: #fff; text-transform: uppercase; letter-spacing: 1px; text-shadow: 0 0 60px rgba(0,0,0,0.9), 0 4px 32px rgba(0,0,0,0.8), 2px 2px 0 rgba(0,0,0,0.6); }
+  .nv-h2 { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 600; font-size: 40px; line-height: 1.3; color: rgba(255,255,255,0.85); }
+  .nv-accent { color: var(--accent); text-shadow: 0 0 30px var(--accent-glow), 0 2px 8px rgba(0,0,0,0.8); }
+  .nv-swipe { font-family: 'DM Sans', sans-serif; font-size: 22px; font-weight: 500; color: rgba(255,255,255,0.5); }
+  .si { position: relative; overflow: hidden; font-family: 'Plus Jakarta Sans', sans-serif; background: #080c1a; }
+  .si::before { content: ''; position: absolute; top: -120px; right: -120px; width: 680px; height: 680px; background: radial-gradient(circle, var(--accent-bg) 0%, transparent 70%); pointer-events: none; }
+  .si-ghost { position: absolute; bottom: -80px; right: -40px; font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 520px; line-height: 1; color: rgba(255,255,255,0.028); user-select: none; pointer-events: none; }
+  .si-logo { position: absolute; top: 64px; right: 72px; height: 40px; z-index: 10; filter: drop-shadow(0 2px 12px rgba(0,0,0,0.6)); opacity: 0.88; }
+  .si-wrap { position: relative; z-index: 2; padding: 180px 108px 200px; height: 100%; display: flex; flex-direction: column; justify-content: center; }
+  .si-tag { display: inline-block; font-weight: 700; font-size: 30px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); background: var(--accent-bg); border: 1px solid rgba(255,140,66,0.28); border-radius: 12px; padding: 12px 32px; margin-bottom: 44px; align-self: flex-start; }
+  .si-h1 { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 108px; line-height: 0.97; color: #fff; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 44px; text-shadow: 0 4px 32px rgba(0,0,0,0.5); }
+  .si-h1 em { color: var(--accent); font-style: normal; }
+  .si-divider { width: 160px; height: 10px; background: var(--accent); border-radius: 6px; margin-bottom: 44px; }
+  .si-body { font-weight: 500; font-size: 36px; line-height: 1.55; color: rgba(255,255,255,0.78); margin-bottom: 40px; }
+  .si-body strong { color: #fff; font-weight: 700; }
+  .si-list { list-style: none; display: flex; flex-direction: column; gap: 26px; }
+  .si-list li { display: block; position: relative; padding-left: 60px; font-size: 33px; color: rgba(255,255,255,0.8); line-height: 1.5; font-weight: 500; }
+  .si-list li::before { content: '→'; color: var(--accent); font-weight: 700; position: absolute; left: 0; top: 2px; }
+  .si-list li strong { color: #fff; font-weight: 700; }
+  /* Fail cards */
+  .si-fail-grid { display: flex; flex-direction: column; gap: 22px; }
+  .si-fail { display: flex; gap: 28px; align-items: flex-start; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,80,80,0.15); border-radius: 20px; padding: 32px 44px; }
+  .sf-num { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 64px; color: rgba(255,80,80,0.4); line-height: 1; flex-shrink: 0; min-width: 60px; }
+  .sf-content { flex: 1; }
+  .sf-title { font-weight: 800; font-size: 36px; color: #fff; margin-bottom: 8px; }
+  .sf-desc { font-size: 28px; color: rgba(255,255,255,0.6); line-height: 1.45; }
+  /* Fix cards */
+  .si-fix-grid { display: flex; flex-direction: column; gap: 22px; }
+  .si-fix { display: flex; gap: 28px; align-items: flex-start; background: var(--accent-bg); border: 1px solid rgba(255,140,66,0.22); border-radius: 20px; padding: 32px 44px; }
+  .sfx-icon { font-size: 52px; flex-shrink: 0; line-height: 1; }
+  .sfx-content { flex: 1; }
+  .sfx-title { font-weight: 800; font-size: 36px; color: var(--accent); margin-bottom: 8px; }
+  .sfx-desc { font-size: 28px; color: rgba(255,255,255,0.72); line-height: 1.45; }
+  /* Stats row */
+  .si-stat-row { display: flex; gap: 20px; }
+  .si-stat { flex: 1; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; padding: 36px 24px; text-align: center; }
+  .ss-num { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 84px; color: var(--accent); line-height: 1; }
+  .ss-label { font-size: 24px; color: rgba(255,255,255,0.6); font-weight: 600; margin-top: 10px; line-height: 1.3; }
+  /* CTA */
+  .si-cta-wrap { display: flex; flex-direction: column; align-items: flex-start; gap: 32px; }
+  .si-cta-btn { display: inline-flex; align-items: center; gap: 16px; background: var(--accent); color: #1a0500; font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 52px; letter-spacing: 0.05em; text-transform: uppercase; padding: 28px 64px; border-radius: 16px; box-shadow: 0 0 48px var(--accent-glow); }
+  .si-cta-sub { font-size: 30px; color: rgba(255,255,255,0.55); font-weight: 500; line-height: 1.5; }
+</style>
+</head>
+<body>
+<h1>Post 27 — Por Que Chatbots Genéricos Falham</h1>
+
+<!-- SLIDE 1 — CAPA -->
+<div class="viewer">
+  <div class="slide-wrap">
+    <div class="slide active" id="s1">
+      <img class="nv-bg" src="https://s3.amazonaws.com/cdn.digital-ai.tech/uploads/media-cortex/social/assets/post-27-cover.jpg" alt="capa post 27">
+      <div class="nv-fade-top"></div>
+      <div class="nv-fade-bot"></div>
+      <img class="nv-logo" src="https://s3.amazonaws.com/cdn.digital-ai.tech/uploads/media-cortex/identity/digital-ai/logos/logo-negative.png" alt="Digital AI">
+      <div class="nv-text">
+        <div class="nv-h1">CHATBOT<br><span class="nv-accent">GENÉRICO</span><br>NÃO É IA</div>
+        <div class="nv-h2">Por que a maioria falha — e o que fazer diferente</div>
+        <div class="nv-swipe">👉 deslize para descobrir</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 2 — POR QUE FALHAM (razões 1-2) -->
+<div class="viewer">
+  <div class="slide-wrap">
+    <div class="slide active si" id="s2">
+      <div class="si-ghost">✗</div>
+      <img class="si-logo" src="https://s3.amazonaws.com/cdn.digital-ai.tech/uploads/media-cortex/identity/digital-ai/logos/logo-negative.png" alt="Digital AI">
+      <div class="si-wrap">
+        <div class="si-tag">Por que falham</div>
+        <div class="si-h1" style="font-size:84px; margin-bottom:32px;">ERROS<br>CLÁSSICOS</div>
+        <div class="si-fail-grid">
+          <div class="si-fail">
+            <div class="sf-num">01</div>
+            <div class="sf-content">
+              <div class="sf-title">Respostas engessadas</div>
+              <div class="sf-desc">Só funciona se o cliente perguntar <em>exatamente</em> como foi programado. Qualquer variação = erro.</div>
+            </div>
+          </div>
+          <div class="si-fail">
+            <div class="sf-num">02</div>
+            <div class="sf-content">
+              <div class="sf-title">Sem memória de contexto</div>
+              <div class="sf-desc">O chatbot não lembra o que foi dito 2 mensagens atrás. O cliente repete tudo do zero.</div>
+            </div>
+          </div>
+          <div class="si-fail">
+            <div class="sf-num">03</div>
+            <div class="sf-content">
+              <div class="sf-title">Nenhuma personalização</div>
+              <div class="sf-desc">Mesma linguagem para clínica, loja e imobiliária. Parece robô, porque é robô.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 3 — MAIS RAZÕES (4-5) -->
+<div class="viewer">
+  <div class="slide-wrap">
+    <div class="slide active si" id="s3">
+      <div class="si-ghost">!</div>
+      <img class="si-logo" src="https://s3.amazonaws.com/cdn.digital-ai.tech/uploads/media-cortex/identity/digital-ai/logos/logo-negative.png" alt="Digital AI">
+      <div class="si-wrap">
+        <div class="si-tag">O que ninguém conta</div>
+        <div class="si-h1" style="font-size:84px; margin-bottom:32px;">MAIS<br>PROBLEMAS</div>
+        <div class="si-fail-grid">
+          <div class="si-fail">
+            <div class="sf-num">04</div>
+            <div class="sf-content">
+              <div class="sf-title">Não sabe quando escalar</div>
+              <div class="sf-desc">Insiste em "resolver" o problema enquanto o cliente fica com raiva. Deveria chamar um humano.</div>
+            </div>
+          </div>
+          <div class="si-fail">
+            <div class="sf-num">05</div>
+            <div class="sf-content">
+              <div class="sf-title">Não aprende com o tempo</div>
+              <div class="sf-desc">Em 6 meses ele é idêntico ao dia 1. As perguntas do cliente evoluem — o bot não.</div>
+            </div>
+          </div>
+        </div>
+        <div class="si-body" style="margin-top:36px; font-size:33px;"><strong>Resultado?</strong> 72% dos usuários abandonam chatbots após 1 interação ruim.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 4 — O QUE FAZER DIFERENTE -->
+<div class="viewer">
+  <div class="slide-wrap">
+    <div class="slide active si" id="s4">
+      <div class="si-ghost">✓</div>
+      <img class="si-logo" src="https://s3.amazonaws.com/cdn.digital-ai.tech/uploads/media-cortex/identity/digital-ai/logos/logo-negative.png" alt="Digital AI">
+      <div class="si-wrap">
+        <div class="si-tag">Nossa abordagem</div>
+        <div class="si-h1" style="font-size:84px; margin-bottom:32px;">O QUE<br>FAZEMOS<br>DIFERENTE</div>
+        <div class="si-fix-grid">
+          <div class="si-fix">
+            <div class="sfx-icon">🧠</div>
+            <div class="sfx-content">
+              <div class="sfx-title">IA com contexto real</div>
+              <div class="sfx-desc">Lembra de toda a conversa e entende intenção, não só palavras-chave.</div>
+            </div>
+          </div>
+          <div class="si-fix">
+            <div class="sfx-icon">🎯</div>
+            <div class="sfx-content">
+              <div class="sfx-title">Treinada no seu negócio</div>
+              <div class="sfx-desc">Base de conhecimento com seus produtos, processos e linguagem do setor.</div>
+            </div>
+          </div>
+          <div class="si-fix">
+            <div class="sfx-icon">🤝</div>
+            <div class="sfx-content">
+              <div class="sfx-title">Escalonamento inteligente</div>
+              <div class="sfx-desc">Detecta frustração e transfere para humano no momento certo — com contexto.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 5 — RESULTADOS -->
+<div class="viewer">
+  <div class="slide-wrap">
+    <div class="slide active si" id="s5">
+      <div class="si-ghost">↑</div>
+      <img class="si-logo" src="https://s3.amazonaws.com/cdn.digital-ai.tech/uploads/media-cortex/identity/digital-ai/logos/logo-negative.png" alt="Digital AI">
+      <div class="si-wrap">
+        <div class="si-tag">Números reais</div>
+        <div class="si-h1" style="font-size:84px; margin-bottom:40px;">IA FEITA<br>PARA<br>DURAR</div>
+        <div class="si-stat-row">
+          <div class="si-stat">
+            <div class="ss-num">94%</div>
+            <div class="ss-label">taxa de resolução sem humano</div>
+          </div>
+          <div class="si-stat">
+            <div class="ss-num">4.6★</div>
+            <div class="ss-label">satisfação média dos clientes</div>
+          </div>
+        </div>
+        <div class="si-stat-row" style="margin-top:20px;">
+          <div class="si-stat">
+            <div class="ss-num">+60%</div>
+            <div class="ss-label">mais eficácia que chatbot genérico</div>
+          </div>
+          <div class="si-stat">
+            <div class="ss-num">30d</div>
+            <div class="ss-label">para implementar e ver resultado</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 6 — CTA -->
+<div class="viewer">
+  <div class="slide-wrap">
+    <div class="slide active si" id="s6">
+      <div class="si-ghost">→</div>
+      <img class="si-logo" src="https://s3.amazonaws.com/cdn.digital-ai.tech/uploads/media-cortex/identity/digital-ai/logos/logo-negative.png" alt="Digital AI">
+      <div class="si-wrap">
+        <div class="si-tag">Próximo passo</div>
+        <div class="si-h1" style="font-size:96px; margin-bottom:32px;">PARE DE<br>USAR BOT.<br>USE <em>IA</em>.</div>
+        <div class="si-divider"></div>
+        <div class="si-cta-wrap">
+          <div class="si-body">Comente <strong>"GENÉRICO"</strong> abaixo e veja como uma IA treinada no seu negócio funciona na prática.</div>
+          <div class="si-cta-btn">GENÉRICO →</div>
+          <div class="si-cta-sub">Diagnóstico gratuito · Sem compromisso · Resultado em 30 dias</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="nav">
+  <button id="prev" onclick="go(-1)" disabled>‹</button>
+  <div class="dots" id="dots"></div>
+  <button id="next" onclick="go(1)">›</button>
+  <span class="counter" id="counter">1 / 6</span>
+</div>
+
+<script>
+  let cur = 0;
+  const viewers = document.querySelectorAll('.viewer');
+  const total = viewers.length;
+  const dotsEl = document.getElementById('dots');
+  for(let i=0;i<total;i++){const d=document.createElement('div');d.className='dot'+(i===0?' active':'');d.onclick=()=>jump(i);dotsEl.appendChild(d);}
+  function jump(n){cur=n;update();}
+  function go(d){cur=Math.max(0,Math.min(total-1,cur+d));update();}
+  function update(){
+    viewers.forEach((v,i)=>{const sw=v.querySelector('.slide-wrap');sw.style.display=i===cur?'block':'none';});
+    document.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('active',i===cur));
+    document.getElementById('counter').textContent=(cur+1)+' / '+total;
+    document.getElementById('prev').disabled=cur===0;
+    document.getElementById('next').disabled=cur===total-1;
+  }
+  viewers.forEach((v,i)=>{const sw=v.querySelector('.slide-wrap');sw.style.display=i===0?'block':'none';});
+</script>
+<div style="display:flex;gap:10px;margin-top:14px;justify-content:center;flex-wrap:wrap;">
+  <button onclick="downloadSlide('ig')" style="background:linear-gradient(135deg,#4F9CF9,#9B5CF6);color:#fff;border:none;border-radius:10px;padding:11px 22px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:13px;cursor:pointer;min-width:200px;">⬇ Instagram (ZIP PNG)</button>
+  <button onclick="downloadSlide('li')" style="background:rgba(255,255,255,0.08);color:#fff;border:1px solid rgba(255,255,255,0.18);border-radius:10px;padding:11px 22px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:13px;cursor:pointer;min-width:200px;">⬇ LinkedIn (PDF)</button>
+</div>
+<div style="margin-top:14px;background:#0e1220;border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:18px 20px;max-width:540px;">
+  <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;font-weight:700;color:rgba(255,255,255,0.32);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:8px;">📝 Legenda do Post</div>
+  <div id="post-caption" style="font-family:'DM Sans',sans-serif;font-size:13px;color:rgba(255,255,255,0.72);line-height:1.65;white-space:pre-wrap;">"Olá! Sou o assistente virtual. Para continuar, digite 1 para..."
+
+Ninguém aguenta mais.
+
+Chatbot genérico não entende contexto, não lembra da conversa anterior e faz o cliente repetir tudo.
+
+O resultado: cliente frustrado que não volta.
+
+↓ Arraste para entender a diferença entre chatbot e agente de IA
+
+Comenta DIFERENÇA que a gente explica sem tecnicismo 👇
+
+#ChatbotVsIA #DigitalAI #AgentesDeIA #AtendimentoDigital #NãoAoChatbotGenérico</div>
+  <button onclick="copyCaption()" style="margin-top:10px;background:rgba(79,156,249,0.1);border:1px solid rgba(79,156,249,0.22);color:#4F9CF9;border-radius:8px;padding:7px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;font-size:12px;cursor:pointer;">📋 Copiar legenda</button>
+</div>
+<script>
+/* ── Multi-Viewer Navigation ── */
+(function () {
+  var viewers   = document.querySelectorAll('.viewer');
+  if (!viewers.length) return;
+  var total     = viewers.length;
+  var current   = 0;
+  var dotsEl    = document.getElementById('dots');
+  var counterEl = document.getElementById('counter');
+  var prevBtn   = document.getElementById('prev');
+  var nextBtn   = document.getElementById('next');
+
+  /* Build dots */
+  if (dotsEl) {
+    for (var i = 0; i < total; i++) {
+      (function (idx) {
+        var d = document.createElement('div');
+        d.className = 'dot' + (idx === 0 ? ' active' : '');
+        d.addEventListener('click', function () { go(idx - current); });
+        dotsEl.appendChild(d);
+      })(i);
+    }
+  }
+
+  function show(n) {
+    viewers[current].style.display = 'none';
+    if (dotsEl && dotsEl.children[current]) dotsEl.children[current].classList.remove('active');
+    current = n;
+    viewers[current].style.display = '';
+    if (dotsEl && dotsEl.children[current]) dotsEl.children[current].classList.add('active');
+    if (counterEl) counterEl.textContent = (current + 1) + ' / ' + total;
+    if (prevBtn) prevBtn.disabled = (current === 0);
+    if (nextBtn) nextBtn.disabled = (current === total - 1);
+  }
+
+  /* Hide all viewers except first */
+  for (var j = 1; j < total; j++) viewers[j].style.display = 'none';
+  if (prevBtn) prevBtn.disabled = true;
+  if (counterEl) counterEl.textContent = '1 / ' + total;
+
+  window.go = function (dir) {
+    var next = current + dir;
+    if (next >= 0 && next < total) show(next);
+  };
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowLeft')  window.go(-1);
+    if (e.key === 'ArrowRight') window.go(1);
+  });
+})();
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script>
+/* ── Capture via html2canvas onclone (zero DOM mutation) ── */
+async function captureElement(el, scale) {
+  return await html2canvas(el, {
+    width: 1080, height: 1350, scale: scale,
+    useCORS: true, allowTaint: false, backgroundColor: '#080c1a',
+    logging: false, imageTimeout: 15000, removeContainer: true,
+    onclone: function(clonedDoc, clonedEl) {
+      /* Inject CSS overrides into clone before render */
+      var s = clonedDoc.createElement('style');
+      s.textContent =
+        /* Remove viewer clip + shadow that cause edge artifacts */
+        '.viewer{border-radius:0!important;box-shadow:none!important;' +
+        'overflow:visible!important;width:1080px!important;height:1350px!important;transform:none!important;}' +
+        /* Remove slide-wrap scale transform */
+        '.slide-wrap{transform:none!important;width:1080px!important;' +
+        'height:1350px!important;overflow:visible!important;}' +
+        /* Remove CSS filter (drop-shadow) that creates blurry halos */
+        '.nv-logo,.si-logo{filter:none!important;}' +
+        /* Single-card posts */
+        '.frame-wrapper{border-radius:0!important;box-shadow:none!important;' +
+        'overflow:visible!important;width:1080px!important;height:1350px!important;}' +
+        '.post-frame{transform:none!important;width:1080px!important;height:1350px!important;}';
+      clonedDoc.head.appendChild(s);
+      /* Force this slide visible at full resolution */
+      clonedEl.style.setProperty('display',    'block',    'important');
+      clonedEl.style.setProperty('visibility', 'visible',  'important');
+      clonedEl.style.setProperty('opacity',    '1',        'important');
+      clonedEl.style.setProperty('transform',  'none',     'important');
+      clonedEl.style.setProperty('width',      '1080px',   'important');
+      clonedEl.style.setProperty('height',     '1350px',   'important');
+      clonedEl.style.setProperty('overflow',   'hidden',   'important');
+      clonedEl.style.setProperty('position',   'relative', 'important');
+      /* Body reset — prevent body layout from interfering */
+      var b = clonedDoc.body;
+      if (b) {
+        b.style.setProperty('margin',     '0',       'important');
+        b.style.setProperty('padding',    '0',       'important');
+        b.style.setProperty('background', '#080c1a', 'important');
+        b.style.setProperty('display',    'block',   'important');
+        b.style.setProperty('min-height', '0',       'important');
+        b.style.setProperty('overflow',   'visible', 'important');
+      }
+    }
+  });
+}
+
+async function downloadSlide(fmt) {
+  var btn = event.currentTarget;
+  btn.disabled = true;
+  btn.textContent = '⏳ Aguarde...';
+  try {
+    /* Post ID + headline for filenames */
+    var postId = 'post-27';
+    var titleParts = document.title.split(' — ');
+    var headline = titleParts[1] ? titleParts[1].split(' | ')[0].trim() : '';
+    var slug = headline
+      .normalize('NFD').replace(/[̀-ͯ]/g, '')
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-|-$/g, '');
+    var baseName = postId + (slug ? '-' + slug : '');
+
+    /* Detect structure and collect all slides */
+    var slides = [];
+    var isSingleCard = !!document.querySelector('.post-frame');
+    var viewers      = document.querySelectorAll('.viewer');
+
+    if (isSingleCard) {
+      slides = [document.querySelector('.post-frame')];
+    } else if (viewers.length > 1) {
+      /* Multi-viewer: posts 27-30 — each viewer = one full slide */
+      slides = Array.from(viewers).map(function(v) {
+        return v.querySelector('.slide.active') || v.querySelector('.slide');
+      });
+    } else {
+      /* Standard carousel: ALL slides (including hidden ones) */
+      slides = Array.from(document.querySelectorAll('.slide'));
+    }
+
+    if (fmt === 'ig') {
+      /* Instagram: ZIP of ALL slides as PNG 6480×8100 */
+      var zip = new JSZip();
+      for (var i = 0; i < slides.length; i++) {
+        btn.textContent = '⏳ Capturando (' + (i+1) + '/' + slides.length + ')...';
+        var canvas = await captureElement(slides[i], 6);
+        var blob   = await new Promise(function(res){ canvas.toBlob(res, 'image/png'); });
+        zip.file(baseName + '-slide-' + String(i+1).padStart(2,'0') + '.png', blob);
+      }
+      btn.textContent = '⏳ Comprimindo ZIP...';
+      var zipBlob = await zip.generateAsync({type:'blob', compression:'STORE'});
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(zipBlob);
+      a.download = baseName + '-instagram.zip';
+      a.click();
+      URL.revokeObjectURL(a.href);
+    } else {
+      /* LinkedIn: multi-page PDF 3240×4050 */
+      var pdf = new window.jspdf.jsPDF({orientation:'portrait', unit:'px', format:[3240,4050]});
+      for (var i = 0; i < slides.length; i++) {
+        btn.textContent = '⏳ PDF (' + (i+1) + '/' + slides.length + ')...';
+        var c = await captureElement(slides[i], 3);
+        if (i > 0) pdf.addPage([3240,4050],'p');
+        pdf.addImage(c.toDataURL('image/jpeg',0.92),'JPEG',0,0,3240,4050);
+      }
+      pdf.save(baseName + '-linkedin.pdf');
+    }
+  } catch(e) {
+    console.error(e);
+    alert('Erro ao capturar. Tente novamente.');
+  }
+  btn.textContent = fmt === 'ig' ? '⬇ Instagram (ZIP PNG)' : '⬇ LinkedIn (PDF)';
+  btn.disabled = false;
+}
+
+function copyCaption() {
+  var txt = document.getElementById('post-caption').innerText;
+  var btn = event.currentTarget;
+  navigator.clipboard.writeText(txt).then(function() {
+    btn.textContent = '✅ Copiado!';
+    setTimeout(function(){ btn.textContent = '📋 Copiar legenda'; }, 2000);
+  }).catch(function(){
+    var ta = document.createElement('textarea'); ta.value = txt;
+    document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+    btn.textContent = '✅ Copiado!';
+    setTimeout(function(){ btn.textContent = '📋 Copiar legenda'; }, 2000);
+  });
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Post 10 — Seus Dados com IA Ficam no Brasil? | Digital AI</title>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #030a0f;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      font-family: 'DM Sans', sans-serif;
+      padding: 40px 20px;
+    }
+
+    .viewer { position: relative; width: 540px; height: 675px; }
+
+    .frame-wrapper {
+      width: 540px; height: 675px; overflow: hidden;
+      border-radius: 12px;
+      box-shadow: 0 32px 80px rgba(0,200,83,0.25), 0 8px 24px rgba(0,0,0,0.7);
+      position: relative;
+    }
+
+    .post-frame {
+      position: relative; width: 1080px; height: 1350px;
+      transform: scale(0.5); transform-origin: top left; overflow: hidden;
+    }
+
+    .cover-img {
+      width: 1080px; height: 1350px; object-fit: cover;
+      position: absolute; top: 0; left: 0; display: block;
+    }
+
+    .overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(
+        160deg,
+        rgba(3,10,15,0.88) 0%,
+        rgba(3,10,15,0.70) 40%,
+        rgba(3,10,15,0.55) 70%,
+        rgba(3,10,15,0.85) 100%
+      );
+      z-index: 1;
+    }
+
+    .content {
+      position: absolute; inset: 0; z-index: 2;
+      display: flex; flex-direction: column; padding: 72px 76px;
+    }
+
+    .top-row {
+      display: flex; align-items: center; justify-content: space-between;
+    }
+
+    .badge-top {
+      display: inline-flex; align-items: center; gap: 12px;
+      background: rgba(0,200,83,0.15);
+      border: 1px solid rgba(0,200,83,0.35);
+      border-radius: 100px;
+      padding: 14px 28px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 22px; font-weight: 600;
+      color: #4EFF9A;
+    }
+
+    .logo-top { height: 42px; opacity: 0.9; }
+
+    .bottom {
+      margin-top: auto;
+      display: flex; flex-direction: column; gap: 36px;
+    }
+
+    .headline {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 800; font-size: 90px; line-height: 0.92;
+      color: #ffffff; text-transform: uppercase; letter-spacing: -0.01em;
+      text-shadow: 0 4px 32px rgba(0,0,0,0.9);
+    }
+
+    .headline em {
+      font-style: normal; color: #4EFF9A;
+      text-shadow: 0 0 40px rgba(78,255,154,0.6), 0 2px 8px rgba(0,0,0,0.8);
+    }
+
+    .answer-box {
+      background: rgba(0,200,83,0.06);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(0,200,83,0.20);
+      border-radius: 20px;
+      padding: 40px 44px;
+    }
+
+    .answer-title {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 20px; font-weight: 700; color: #4EFF9A;
+      letter-spacing: 0.05em; text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+
+    .answer-list {
+      list-style: none; display: flex; flex-direction: column; gap: 16px;
+    }
+
+    .answer-item {
+      display: flex; align-items: flex-start; gap: 20px;
+    }
+
+    .a-check {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: rgba(0,200,83,0.15); border: 1px solid rgba(0,200,83,0.3);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; flex-shrink: 0; margin-top: 2px;
+    }
+
+    .a-text {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 24px; font-weight: 600;
+      color: rgba(255,255,255,0.88); line-height: 1.4;
+    }
+
+    .a-text strong { color: #fff; }
+
+    .cta-row {
+      display: flex; align-items: center; gap: 20px;
+    }
+
+    .cta-pill {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: #4EFF9A;
+      border-radius: 100px; padding: 16px 36px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 22px; font-weight: 800; color: #030a0f;
+    }
+
+    .cta-note {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 20px; color: rgba(255,255,255,0.45); line-height: 1.4;
+    }
+  </style>
+</head>
+<body>
+  <div class="viewer">
+    <div class="frame-wrapper">
+      <div class="post-frame">
+        <img class="cover-img" src="https://s3.amazonaws.com/cdn.digital-ai.tech/uploads/media-cortex/social/assets/post-10-cover.jpg" alt="Segurança de dados IA Brasil">
+        <div class="overlay"></div>
+        <div class="content">
+          <div class="top-row">
+            <img class="logo-top" src="https://s3.amazonaws.com/cdn.digital-ai.tech/uploads/media-cortex/identity/digital-ai/logos/logo-negative.png" alt="Digital AI">
+            <div class="badge-top">🔒 Dúvida real</div>
+          </div>
+          <div class="bottom">
+            <div class="headline">SEUS<br>DADOS<br>COM <em>IA</em><br>FICAM NO<br>BRASIL?</div>
+            <div class="answer-box">
+              <div class="answer-title">✅ Nossa resposta honesta:</div>
+              <ul class="answer-list">
+                <li class="answer-item">
+                  <div class="a-check">✓</div>
+                  <div class="a-text">Stack <strong>self-hosted</strong>: seus dados ficam no seu servidor</div>
+                </li>
+                <li class="answer-item">
+                  <div class="a-check">✓</div>
+                  <div class="a-text">Conformidade com a <strong>LGPD</strong> por design</div>
+                </li>
+                <li class="answer-item">
+                  <div class="a-check">✓</div>
+                  <div class="a-text"><strong>Zero repasse</strong> de dados de clientes a terceiros</div>
+                </li>
+              </ul>
+            </div>
+            <div class="cta-row">
+              <div class="cta-pill">Comenta "LGPD" ↓</div>
+              <div class="cta-note">e a gente explica<br>como funciona na prática</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<div style="display:flex;gap:10px;margin-top:14px;justify-content:center;flex-wrap:wrap;">
+  <button onclick="downloadSlide('ig')" style="background:linear-gradient(135deg,#4F9CF9,#9B5CF6);color:#fff;border:none;border-radius:10px;padding:11px 22px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:13px;cursor:pointer;min-width:200px;">⬇ Instagram (ZIP PNG)</button>
+  <button onclick="downloadSlide('li')" style="background:rgba(255,255,255,0.08);color:#fff;border:1px solid rgba(255,255,255,0.18);border-radius:10px;padding:11px 22px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:13px;cursor:pointer;min-width:200px;">⬇ LinkedIn (PDF)</button>
+</div>
+<div style="margin-top:14px;background:#0e1220;border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:18px 20px;max-width:540px;">
+  <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;font-weight:700;color:rgba(255,255,255,0.32);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:8px;">📝 Legenda do Post</div>
+  <div id="post-caption" style="font-family:'DM Sans',sans-serif;font-size:13px;color:rgba(255,255,255,0.72);line-height:1.65;white-space:pre-wrap;">Antes de contratar qualquer solução de IA para sua empresa, faça essa pergunta:
+
+"Onde ficam os meus dados e os dados dos meus clientes?"
+
+Na Digital AI, a resposta é clara, documentada e compatível com a LGPD.
+
+↓ Veja exatamente como funciona nossa arquitetura de segurança
+
+Comenta LGPD que a gente explica tudo no detalhe 👇
+
+#LGPDePME #SegurançaDeDados #DigitalAI #IASegura #PrivacidadeDeDados</div>
+  <button onclick="copyCaption()" style="margin-top:10px;background:rgba(79,156,249,0.1);border:1px solid rgba(79,156,249,0.22);color:#4F9CF9;border-radius:8px;padding:7px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;font-size:12px;cursor:pointer;">📋 Copiar legenda</button>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script>
+/* ── Capture via html2canvas onclone (zero DOM mutation) ── */
+async function captureElement(el, scale) {
+  return await html2canvas(el, {
+    width: 1080, height: 1350, scale: scale,
+    useCORS: true, allowTaint: false, backgroundColor: '#080c1a',
+    logging: false, imageTimeout: 15000, removeContainer: true,
+    onclone: function(clonedDoc, clonedEl) {
+      /* Inject CSS overrides into clone before render */
+      var s = clonedDoc.createElement('style');
+      s.textContent =
+        /* Remove viewer clip + shadow that cause edge artifacts */
+        '.viewer{border-radius:0!important;box-shadow:none!important;' +
+        'overflow:visible!important;width:1080px!important;height:1350px!important;transform:none!important;}' +
+        /* Remove slide-wrap scale transform */
+        '.slide-wrap{transform:none!important;width:1080px!important;' +
+        'height:1350px!important;overflow:visible!important;}' +
+        /* Remove CSS filter (drop-shadow) that creates blurry halos */
+        '.nv-logo,.si-logo{filter:none!important;}' +
+        /* Single-card posts */
+        '.frame-wrapper{border-radius:0!important;box-shadow:none!important;' +
+        'overflow:visible!important;width:1080px!important;height:1350px!important;}' +
+        '.post-frame{transform:none!important;width:1080px!important;height:1350px!important;}';
+      clonedDoc.head.appendChild(s);
+      /* Force this slide visible at full resolution */
+      clonedEl.style.setProperty('display',    'block',    'important');
+      clonedEl.style.setProperty('visibility', 'visible',  'important');
+      clonedEl.style.setProperty('opacity',    '1',        'important');
+      clonedEl.style.setProperty('transform',  'none',     'important');
+      clonedEl.style.setProperty('width',      '1080px',   'important');
+      clonedEl.style.setProperty('height',     '1350px',   'important');
+      clonedEl.style.setProperty('overflow',   'hidden',   'important');
+      clonedEl.style.setProperty('position',   'relative', 'important');
+      /* Body reset — prevent body layout from interfering */
+      var b = clonedDoc.body;
+      if (b) {
+        b.style.setProperty('margin',     '0',       'important');
+        b.style.setProperty('padding',    '0',       'important');
+        b.style.setProperty('background', '#080c1a', 'important');
+        b.style.setProperty('display',    'block',   'important');
+        b.style.setProperty('min-height', '0',       'important');
+        b.style.setProperty('overflow',   'visible', 'important');
+      }
+    }
+  });
+}
+
+async function downloadSlide(fmt) {
+  var btn = event.currentTarget;
+  btn.disabled = true;
+  btn.textContent = '⏳ Aguarde...';
+  try {
+    /* Post ID + headline for filenames */
+    var postId = 'post-10';
+    var titleParts = document.title.split(' — ');
+    var headline = titleParts[1] ? titleParts[1].split(' | ')[0].trim() : '';
+    var slug = headline
+      .normalize('NFD').replace(/[̀-ͯ]/g, '')
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-|-$/g, '');
+    var baseName = postId + (slug ? '-' + slug : '');
+
+    /* Detect structure and collect all slides */
+    var slides = [];
+    var isSingleCard = !!document.querySelector('.post-frame');
+    var viewers      = document.querySelectorAll('.viewer');
+
+    if (isSingleCard) {
+      slides = [document.querySelector('.post-frame')];
+    } else if (viewers.length > 1) {
+      /* Multi-viewer: posts 27-30 — each viewer = one full slide */
+      slides = Array.from(viewers).map(function(v) {
+        return v.querySelector('.slide.active') || v.querySelector('.slide');
+      });
+    } else {
+      /* Standard carousel: ALL slides (including hidden ones) */
+      slides = Array.from(document.querySelectorAll('.slide'));
+    }
+
+    if (fmt === 'ig') {
+      /* Instagram: ZIP of ALL slides as PNG 6480×8100 */
+      var zip = new JSZip();
+      for (var i = 0; i < slides.length; i++) {
+        btn.textContent = '⏳ Capturando (' + (i+1) + '/' + slides.length + ')...';
+        var canvas = await captureElement(slides[i], 6);
+        var blob   = await new Promise(function(res){ canvas.toBlob(res, 'image/png'); });
+        zip.file(baseName + '-slide-' + String(i+1).padStart(2,'0') + '.png', blob);
+      }
+      btn.textContent = '⏳ Comprimindo ZIP...';
+      var zipBlob = await zip.generateAsync({type:'blob', compression:'STORE'});
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(zipBlob);
+      a.download = baseName + '-instagram.zip';
+      a.click();
+      URL.revokeObjectURL(a.href);
+    } else {
+      /* LinkedIn: multi-page PDF 3240×4050 */
+      var pdf = new window.jspdf.jsPDF({orientation:'portrait', unit:'px', format:[3240,4050]});
+      for (var i = 0; i < slides.length; i++) {
+        btn.textContent = '⏳ PDF (' + (i+1) + '/' + slides.length + ')...';
+        var c = await captureElement(slides[i], 3);
+        if (i > 0) pdf.addPage([3240,4050],'p');
+        pdf.addImage(c.toDataURL('image/jpeg',0.92),'JPEG',0,0,3240,4050);
+      }
+      pdf.save(baseName + '-linkedin.pdf');
+    }
+  } catch(e) {
+    console.error(e);
+    alert('Erro ao capturar. Tente novamente.');
+  }
+  btn.textContent = fmt === 'ig' ? '⬇ Instagram (ZIP PNG)' : '⬇ LinkedIn (PDF)';
+  btn.disabled = false;
+}
+
+function copyCaption() {
+  var txt = document.getElementById('post-caption').innerText;
+  var btn = event.currentTarget;
+  navigator.clipboard.writeText(txt).then(function() {
+    btn.textContent = '✅ Copiado!';
+    setTimeout(function(){ btn.textContent = '📋 Copiar legenda'; }, 2000);
+  }).catch(function(){
+    var ta = document.createElement('textarea'); ta.value = txt;
+    document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+    btn.textContent = '✅ Copiado!';
+    setTimeout(function(){ btn.textContent = '📋 Copiar legenda'; }, 2000);
+  });
+}
+</script>
+</body>
+</html>
