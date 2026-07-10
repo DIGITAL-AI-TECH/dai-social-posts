@@ -252,21 +252,37 @@
 </div>
 
 <script>
-  let cur = 0;
-  const viewers = document.querySelectorAll('.viewer');
-  const total = viewers.length;
-  const dotsEl = document.getElementById('dots');
-  for(let i=0;i<total;i++){const d=document.createElement('div');d.className='dot'+(i===0?' active':'');d.onclick=()=>jump(i);dotsEl.appendChild(d);}
-  function jump(n){cur=n;update();}
-  function go(d){cur=Math.max(0,Math.min(total-1,cur+d));update();}
-  function update(){
-    viewers.forEach((v,i)=>{const sw=v.querySelector('.slide-wrap');sw.style.display=i===cur?'block':'none';});
-    document.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('active',i===cur));
-    document.getElementById('counter').textContent=(cur+1)+' / '+total;
-    document.getElementById('prev').disabled=cur===0;
-    document.getElementById('next').disabled=cur===total-1;
+  const _viewers = document.querySelectorAll('.viewer');
+  const _total   = _viewers.length;
+  const _dotsEl  = document.getElementById('dots');
+  let _cur = 0;
+
+  for (let i = 0; i < _total; i++) {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === 0 ? ' active' : '');
+    d.onclick = () => _jump(i);
+    _dotsEl.appendChild(d);
   }
-  viewers.forEach((v,i)=>{const sw=v.querySelector('.slide-wrap');sw.style.display=i===0?'block':'none';});
+
+  function _update() {
+    _viewers.forEach((v, i) => { v.style.display = i === _cur ? '' : 'none'; });
+    document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === _cur));
+    document.getElementById('counter').textContent = (_cur + 1) + ' / ' + _total;
+    document.getElementById('prev').disabled = _cur === 0;
+    document.getElementById('next').disabled = _cur === _total - 1;
+  }
+  function _jump(n) { _cur = n; _update(); }
+  function go(d)    { _cur = Math.max(0, Math.min(_total - 1, _cur + d)); _update(); }
+
+  /* init: esconde viewers 1..n */
+  _viewers.forEach((v, i) => { v.style.display = i === 0 ? '' : 'none'; });
+  document.getElementById('prev').disabled = true;
+  document.getElementById('counter').textContent = '1 / ' + _total;
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowLeft')  go(-1);
+    if (e.key === 'ArrowRight') go(1);
+  });
 </script>
 <div style="display:flex;gap:10px;margin-top:14px;justify-content:center;flex-wrap:wrap;">
   <button onclick="downloadSlide('ig')" style="background:linear-gradient(135deg,#4F9CF9,#9B5CF6);color:#fff;border:none;border-radius:10px;padding:11px 22px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:13px;cursor:pointer;min-width:200px;">⬇ Instagram (ZIP PNG)</button>
