@@ -388,9 +388,15 @@ async function downloadSlide(fmt) {
     if (fmt === 'ig') {
       /* Instagram: ZIP of ALL slides as PNG 6480×8100 */
       var zip = new JSZip();
+      var _isMultiViewer = viewers.length > 1;
       for (var i = 0; i < slides.length; i++) {
         btn.textContent = '⏳ Capturando (' + (i+1) + '/' + slides.length + ')...';
+        /* Multi-viewer fix: html2canvas can't render display:none parents.
+           Temporarily unhide each viewer before capture, restore after. */
+        var _wasHidden = _isMultiViewer && slides[i].style.display === 'none';
+        if (_wasHidden) { slides[i].style.removeProperty('display'); }
         var canvas = await captureElement(slides[i], 6);
+        if (_wasHidden) { slides[i].style.display = 'none'; }
         var blob   = await new Promise(function(res){ canvas.toBlob(res, 'image/png'); });
         zip.file(baseName + '-slide-' + String(i+1).padStart(2,'0') + '.png', blob);
       }
@@ -404,9 +410,13 @@ async function downloadSlide(fmt) {
     } else {
       /* LinkedIn: multi-page PDF 3240×4050 */
       var pdf = new window.jspdf.jsPDF({orientation:'portrait', unit:'px', format:[3240,4050]});
+      var _isMultiViewerPdf = viewers.length > 1;
       for (var i = 0; i < slides.length; i++) {
         btn.textContent = '⏳ PDF (' + (i+1) + '/' + slides.length + ')...';
+        var _pdfWasHidden = _isMultiViewerPdf && slides[i].style.display === 'none';
+        if (_pdfWasHidden) { slides[i].style.removeProperty('display'); }
         var c = await captureElement(slides[i], 3);
+        if (_pdfWasHidden) { slides[i].style.display = 'none'; }
         if (i > 0) pdf.addPage([3240,4050],'p');
         pdf.addImage(c.toDataURL('image/jpeg',0.92),'JPEG',0,0,3240,4050);
       }
