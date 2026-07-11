@@ -382,9 +382,10 @@ async function downloadSlide(fmt) {
       slides = [document.querySelector('.post-frame')];
     } else if (viewers.length > 1) {
       /* Multi-viewer: posts 27-30 — each viewer = one full slide */
-      slides = Array.from(viewers).map(function(v) {
-        return v.querySelector('.slide.active') || v.querySelector('.slide');
-      });
+      /* Multi-viewer: capture the .viewer itself (not .slide inside it)
+         because hidden viewers have display:none inline — onclone forces
+         the captured element visible, so we need to pass the viewer directly */
+      slides = Array.from(viewers);
     } else {
       /* Standard carousel: ALL slides (including hidden ones) */
       slides = Array.from(document.querySelectorAll('.slide'));
